@@ -8,164 +8,315 @@
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans">
 
-<!-- ========================= HEADER ========================= -->
-<header class="bg-teal-700 text-white py-10 px-6 md:px-12 shadow">
-  <div class="max-w-7xl mx-auto">
-    <h1 class="text-4xl md:text-5xl font-bold mb-3">P-REC Avoided Emissions Calculator</h1>
-    <p class="text-xl text-teal-50">
-      Estimated climate benefits from P-REC procurement.
-    </p>
-  </div>
-</header>
+<!-- =========================
+     HEADER
+========================= -->
+  <header class="bg-teal-700 text-white py-10 px-6 md:px-12 shadow">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold mb-3">P-REC Avoided Emissions Calculator</h1>
+      <p class="text-xl text-teal-50">
+        Estimated climate benefits from P-REC procurement.
+      </p>
+    </div>
+  </header>
 
-<main class="max-w-7xl mx-auto px-6 md:px-12 py-10">
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+  <main class="max-w-7xl mx-auto px-6 md:px-12 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-<!-- ========================= LEFT INPUT ========================= -->
-<section>
+<!-- =========================
+     Left Column: Inputs
+========================= -->
+      <section>
+        <h2 class="text-3xl font-bold mb-6">1. Project &amp; Buyer Inputs</h2>
+        <div class="space-y-5">
 
-<h2 class="text-3xl font-bold mb-6">1. Project & Buyer Inputs</h2>
+          <!-- Input Mode Toggle -->
+     <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+      Input Mode
+      </label>
+     <select id="inputMode" class="w-full border rounded-md px-3 py-2">
+      <option value="budget">Use Budget ($)</option>
+      <option value="quantity">Use P-RECs Purchased (MWh)</option>
+      </select>
+      </div>
 
-<!-- Input Mode -->
-<div class="mb-4">
-  <label class="block text-sm font-medium mb-2">Input Method</label>
-  <select id="inputMode" class="w-full border rounded-md px-3 py-2">
-    <option value="budget">Use Budget ($)</option>
-    <option value="quantity">Use P-RECs Purchased (MWh)</option>
-  </select>
-</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Buyer Budget ($)
+              </label>
+              <input id="budget" type="number" value="100000"
+                class="w-full rounded-md border border-gray-300 px-3 py-2" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                P-REC Price ($/MWh)
+              </label>
+              <input id="price" type="number" value="45"
+                class="w-full rounded-md border border-gray-300 px-3 py-2" />
+            </div>
+          </div>
 
-<!-- Budget + Price -->
-<div id="budgetBlock" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-  <div>
-    <label class="text-sm">Buyer Budget ($)</label>
-    <input id="budget" type="number" value="100000"
-      class="w-full border rounded-md px-3 py-2" />
-  </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Project Emission Factor (tCO2e/MWh)
+            </label>
+            <input id="projectEF" type="number" step="0.001" value="0"
+              class="w-full rounded-md border border-gray-300 px-3 py-2" />
+          </div>
 
-  <div>
-    <label class="text-sm">P-REC Price ($/MWh)</label>
-    <input id="price" type="number" value="45"
-      class="w-full border rounded-md px-3 py-2" />
-  </div>
-</div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Delivery %
+              </label>
+              <input id="delivery" type="number" value="80"
+                class="w-full rounded-md border border-gray-300 px-3 py-2" />
+              <p class="text-xs text-gray-500 mt-1">
+                Share of contracted P-RECs actually delivered to the buyer.
+              </p>
+            </div>
 
-<!-- Manual Quantity -->
-<div id="quantityBlock" style="display:none;">
-  <label class="text-sm">P-RECs Purchased (MWh)</label>
-  <input id="manualQuantity" type="number" value="2000"
-    class="w-full border rounded-md px-3 py-2" />
-</div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Displace %
+              </label>
+              <input id="displace" type="number" value="100"
+                class="w-full rounded-md border border-gray-300 px-3 py-2" />
+              <p class="text-xs text-gray-500 mt-1">
+                Share of delivered renewable electricity assumed to displace the baseline source.
+              </p>
+            </div>
 
-<!-- Project EF -->
-<div class="mt-4">
-  <label class="text-sm">Project Emission Factor (tCO2e/MWh)</label>
-  <input id="projectEF" type="number" value="0"
-    class="w-full border rounded-md px-3 py-2" />
-</div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Cons. Factor %
+              </label>
+              <input id="consFactor" type="number" value="100"
+                class="w-full rounded-md border border-gray-300 px-3 py-2" />
+              <p class="text-xs text-gray-500 mt-1">
+                Conservative adjustment applied to avoid overstating avoided emissions.
+              </p>
+            </div>
+          </div>
+        </div>
 
-<!-- Percent Inputs -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-  <div>
-    <label class="text-sm">Delivery %</label>
-    <input id="delivery" type="number" value="80"
-      class="w-full border rounded-md px-3 py-2" />
-  </div>
+        <h2 class="text-3xl font-bold mt-12 mb-6">2. Existing Off-Grid Baseline Mix (%)</h2>
 
-  <div>
-    <label class="text-sm">Displace %</label>
-    <input id="displace" type="number" value="100"
-      class="w-full border rounded-md px-3 py-2" />
-  </div>
+        <div class="space-y-4">
+          <div class="grid grid-cols-[1fr_140px_70px] items-center gap-3">
+            <label class="font-medium">Diesel Generator</label>
+            <input id="dieselShare" type="number" value="70"
+              class="rounded-md border border-gray-300 px-3 py-2" />
+            <div class="text-sm text-gray-500">EF: 0.9</div>
+          </div>
 
-  <div>
-    <label class="text-sm">Cons. Factor %</label>
-    <input id="consFactor" type="number" value="100"
-      class="w-full border rounded-md px-3 py-2" />
-  </div>
-</div>
+          <div class="grid grid-cols-[1fr_140px_70px] items-center gap-3">
+            <label class="font-medium">Grid Electricity</label>
+            <input id="gridShare" type="number" value="0"
+              class="rounded-md border border-gray-300 px-3 py-2" />
+            <div class="text-sm text-gray-500">EF: 0.5</div>
+          </div>
 
-<!-- Baseline -->
-<h2 class="text-2xl font-bold mt-10 mb-4">2. Existing Off-Grid Baseline Mix (%)</h2>
+          <div class="grid grid-cols-[1fr_140px_70px] items-center gap-3">
+            <label class="font-medium">Kerosene</label>
+            <input id="keroseneShare" type="number" value="21"
+              class="rounded-md border border-gray-300 px-3 py-2" />
+            <div class="text-sm text-gray-500">EF: 0.15</div>
+          </div>
 
-<div class="space-y-3">
-  <input id="dieselShare" type="number" value="70" class="w-full border px-3 py-2" placeholder="Diesel"/>
-  <input id="gridShare" type="number" value="0" class="w-full border px-3 py-2" placeholder="Grid"/>
-  <input id="keroseneShare" type="number" value="21" class="w-full border px-3 py-2" placeholder="Kerosene"/>
-  <input id="candleShare" type="number" value="9" class="w-full border px-3 py-2" placeholder="Candle"/>
-  <input id="otherShare" type="number" value="0" class="w-full border px-3 py-2" placeholder="Other"/>
-</div>
+          <div class="grid grid-cols-[1fr_140px_70px] items-center gap-3">
+            <label class="font-medium">Candle / Wax</label>
+            <input id="candleShare" type="number" value="9"
+              class="rounded-md border border-gray-300 px-3 py-2" />
+            <div class="text-sm text-gray-500">EF: 0.245</div>
+          </div>
 
-<div id="baselineTotalBox" class="mt-4 p-3 bg-green-100 text-center font-bold">
-  Total Baseline Share: 100%
-</div>
+          <div class="grid grid-cols-[1fr_140px_70px] items-center gap-3">
+            <label class="font-medium">Other</label>
+            <input id="otherShare" type="number" value="0"
+              class="rounded-md border border-gray-300 px-3 py-2" />
+            <div class="text-sm text-gray-500">EF: 0</div>
+          </div>
+        </div>
 
-</section>
+        <div id="baselineTotalBox"
+          class="mt-6 rounded-lg bg-green-100 text-green-800 px-4 py-4 text-center font-semibold text-xl">
+          Total Baseline Share: 100.0%
+        </div>
+      </section>
 
-<!-- ========================= RIGHT OUTPUT ========================= -->
-<section>
+ <!-- =========================
+     Right Column：results
+========================= -->
+      <section>
+        <h2 class="text-3xl font-bold mb-6 border-l-8 border-teal-500 pl-3">
+          Buyer Results (Impact Summary)
+        </h2>
 
-<h2 class="text-3xl font-bold mb-6">Results</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div>
+            <div class="text-sm text-gray-500 mb-1">P-RECs Purchased</div>
+            <div id="pRecsPurchased" class="text-4xl font-bold">2,222</div>
+          </div>
 
-<div class="space-y-4">
-  <div>P-RECs Purchased: <span id="pRecsPurchased"></span></div>
-  <div>Avoided Emissions: <span id="avoidedEmissions"></span></div>
-  <div>Cost per tCO2e: <span id="costPerTon"></span></div>
-</div>
+          <div>
+            <div class="text-sm text-gray-500 mb-1">Total Avoided Emissions</div>
+            <div id="avoidedEmissions" class="text-4xl font-bold text-green-600">1,215.2 tCO2e</div>
+          </div>
 
-</section>
+          <div>
+            <div class="text-sm text-gray-500 mb-1">Cost per tCO2e Avoided</div>
+            <div id="costPerTon" class="text-4xl font-bold">$82.29</div>
+          </div>
+        </div>
 
-</div>
-</main>
+        <div class="rounded-xl border border-amber-300 bg-amber-50 px-5 py-5 text-amber-900 mb-8">
+          <p class="text-lg leading-relaxed">
+            <span class="font-bold">Methodological Note:</span>
+            P-RECs are energy attribute certificates, not carbon offsets.
+            Avoided emissions should be reported separately from Scope 2 market-based emissions
+            and disclosed with baseline assumptions.
+          </p>
+        </div>
 
-<script>
-function calculate() {
+        <details class="rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
+          <summary class="cursor-pointer text-lg font-semibold text-gray-800">
+            Assumptions &amp; calculation details
+          </summary>
+          <div class="mt-4 text-sm text-gray-600 space-y-3 leading-6">
+            <p>
+              This tool applies a simplified buyer-side avoided emissions methodology using user-entered
+              baseline shares, baseline emission factors, delivery assumptions, displacement assumptions,
+              and a conservative adjustment factor.
+            </p>
+            <p>
+              Baseline emissions are estimated as a weighted average of the selected existing off-grid
+              energy sources.
+            </p>
+            <p>
+              Estimated avoided emissions =
+              P-RECs Purchased × Delivery Factor × Displacement Factor × Conservative Factor ×
+              (Baseline Emission Factor − Project Emission Factor)
+            </p>
+            <p>
+              Results are indicative only and should be disclosed together with the assumptions used.
+            </p>
+          </div>
+        </details>
+      </section>
+    </div>
+  </main>
 
-const budget = parseFloat(document.getElementById("budget").value) || 0;
-const price = parseFloat(document.getElementById("price").value) || 0;
-const mode = document.getElementById("inputMode").value;
+  <script>
+    function formatNumber(value, decimals = 0) {
+      return Number(value).toLocaleString(undefined, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
 
-let pRecs = 0;
+    function calculate() {
+      const budget = parseFloat(document.getElementById("budget").value) || 0;
+      const price = parseFloat(document.getElementById("price").value) || 0;
+      const projectEF = parseFloat(document.getElementById("projectEF").value) || 0;
 
-if (mode === "budget") {
-  pRecs = price > 0 ? budget / price : 0;
-} else {
-  pRecs = parseFloat(document.getElementById("manualQuantity").value) || 0;
-}
+      const delivery = (parseFloat(document.getElementById("delivery").value) || 0) / 100;
+      const displace = (parseFloat(document.getElementById("displace").value) || 0) / 100;
+      const consFactor = (parseFloat(document.getElementById("consFactor").value) || 0) / 100;
 
-const delivery = document.getElementById("delivery").value / 100;
-const displace = document.getElementById("displace").value / 100;
-const cons = document.getElementById("consFactor").value / 100;
+      const dieselShare = parseFloat(document.getElementById("dieselShare").value) || 0;
+      const gridShare = parseFloat(document.getElementById("gridShare").value) || 0;
+      const keroseneShare = parseFloat(document.getElementById("keroseneShare").value) || 0;
+      const candleShare = parseFloat(document.getElementById("candleShare").value) || 0;
+      const otherShare = parseFloat(document.getElementById("otherShare").value) || 0;
 
-const baselineEF = 0.5; // 简化
+      const totalShare = dieselShare + gridShare + keroseneShare + candleShare + otherShare;
 
-const avoided = pRecs * delivery * displace * cons * baselineEF;
-const cost = avoided > 0 ? budget / avoided : 0;
+      document.getElementById("baselineTotalBox").textContent =
+        `Total Baseline Share: ${formatNumber(totalShare, 1)}%`;
 
-document.getElementById("pRecsPurchased").innerText = pRecs.toFixed(0);
-document.getElementById("avoidedEmissions").innerText = avoided.toFixed(1);
-document.getElementById("costPerTon").innerText = cost.toFixed(2);
-}
+      const sharesValid = totalShare > 0;
 
-// 切换模式
-document.getElementById("inputMode").addEventListener("change", () => {
-  const mode = document.getElementById("inputMode").value;
+      const baselineEF = sharesValid
+        ? (
+            (dieselShare / totalShare) * 0.9 +
+            (gridShare / totalShare) * 0.5 +
+            (keroseneShare / totalShare) * 0.15 +
+            (candleShare / totalShare) * 0.245 +
+            (otherShare / totalShare) * 0
+          )
+        : 0;
 
-  document.getElementById("budgetBlock").style.display =
-    mode === "budget" ? "grid" : "none";
+      // Fixed buyer budget math:
+      // P-RECs purchased = min(available supply, buyer budget / P-REC price)
+      let pRecsPurchased = 0;
+      const inputMode = document.getElementById("inputMode").value;
 
-  document.getElementById("quantityBlock").style.display =
-    mode === "quantity" ? "block" : "none";
+      if (inputMode === "budget") {
+        pRecsPurchased = price > 0 ? (budget / price) : 0;
+      } else {
+        pRecsPurchased = parseFloat(document.getElementById("manualQuantity").value) || 0;
+      }
 
-  calculate();
-});
+      const effectiveMWh = pRecsPurchased * delivery * displace * consFactor;
+      const avoidedPerMWh = Math.max(0, baselineEF - projectEF);
+      const totalAvoided = effectiveMWh * avoidedPerMWh;
+      const costPerTon = totalAvoided > 0 ? budget / totalAvoided : 0;
 
-document.querySelectorAll("input, select").forEach(el => {
-  el.addEventListener("input", calculate);
-});
+      document.getElementById("pRecsPurchased").textContent = formatNumber(pRecsPurchased, 0);
+      document.getElementById("avoidedEmissions").textContent =
+        `${formatNumber(totalAvoided, 1)} tCO2e`;
+      document.getElementById("costPerTon").textContent =
+        totalAvoided > 0 ? `$${formatNumber(costPerTon, 2)}` : "N/A";
 
-calculate();
-</script>
+      const totalBox = document.getElementById("baselineTotalBox");
+      if (Math.abs(totalShare - 100) > 0.01) {
+        totalBox.className =
+          "mt-6 rounded-lg bg-yellow-100 text-yellow-800 px-4 py-4 text-center font-semibold text-xl";
+      } else {
+        totalBox.className =
+          "mt-6 rounded-lg bg-green-100 text-green-800 px-4 py-4 text-center font-semibold text-xl";
+      }
+    }
 
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Manual Quantity Input -->
+    <div id="quantityInput" style="display:none;">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        P-RECs Purchased (MWh)
+      </label>
+      <input id="manualQuantity" type="number" value="2000"
+        class="w-full rounded-md border border-gray-300 px-3 py-2" />
+    </div>
+
+    const inputModeEl = document.getElementById("inputMode");
+    const budgetBlock = document.querySelector(".grid.grid-cols-1.md\\:grid-cols-2");
+    const quantityBlock = document.getElementById("quantityInput");
+
+    function updateInputMode() {
+      if (inputModeEl.value === "budget") {
+        budgetBlock.style.display = "grid";
+        quantityBlock.style.display = "none";
+      } else {
+        budgetBlock.style.display = "none";
+        quantityBlock.style.display = "block";
+      }
+    }
+
+    inputModeEl.addEventListener("change", () => {
+      updateInputMode();
+      calculate();
+    });
+
+    updateInputMode();
+
+    document.querySelectorAll("input, select").forEach(input => {
+      input.addEventListener("input", calculate);
+    });
+
+    calculate();
+  </script>
 </body>
 </html>
