@@ -57,6 +57,13 @@
                 class="w-full rounded-md border border-gray-300 px-3 py-2" />
             </div>
           </div>
+          <div id="quantityInput" style="display:none;">
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              P-RECs Purchased (MWh)
+            </label>
+            <input id="manualQuantity" type="number" value="2000"
+              class="w-full rounded-md border border-gray-300 px-3 py-2" />
+          </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -281,15 +288,6 @@
       }
     }
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Manual Quantity Input -->
-    <div id="quantityInput" style="display:none;">
-      <label class="block text-sm font-medium text-gray-700 mb-1">
-        P-RECs Purchased (MWh)
-      </label>
-      <input id="manualQuantity" type="number" value="2000"
-        class="w-full rounded-md border border-gray-300 px-3 py-2" />
-    </div>
 
     const inputModeEl = document.getElementById("inputMode");
     const budgetBlock = document.querySelector(".grid.grid-cols-1.md\\:grid-cols-2");
