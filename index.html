@@ -184,34 +184,42 @@
      Right Column：results
 ========================= -->
       <section>
-        <h2 class="text-3xl font-serif font-bold mb-6 border-l-8 border-brand-500 pl-3 text-brand-800 not-italic">
+        <h2 class="text-3xl font-serif font-bold mb-8 border-l-4 border-gray-300 pl-4 text-brand-800 not-italic">
   Buyer Results (Impact Summary)
 </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div>
-            <div class="text-sm text-gray-500 mb-1">P-RECs Purchased</div>
-            <div id="pRecsPurchased" class="text-4xl font-bold">2,222</div>
-          </div>
+<div class="space-y-8 mb-8">
+  <!-- Row 1 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+      <div class="text-sm text-gray-500 mb-2">P-RECs Purchased</div>
+      <div id="pRecsPurchased" class="text-4xl font-bold leading-tight text-gray-900">2,222</div>
+    </div>
 
-          <div>
-            <div class="text-sm text-gray-500 mb-1">Total Avoided Emissions</div>
-            <div id="avoidedEmissions" class="text-4xl font-bold text-green-600">1,215.2 tCO2e</div>
-          </div>
+    <div>
+      <div class="text-sm text-gray-500 mb-2">Total Avoided Emissions</div>
+      <div id="avoidedEmissions" class="text-4xl font-bold leading-tight text-green-600">1,215.2 tCO2e</div>
+    </div>
 
-          <div>
-            <div class="text-sm text-gray-500 mb-1">Cost per tCO2e Avoided</div>
-            <div id="costPerTon" class="text-4xl font-bold">$82.29</div>
-          </div>
-          <div>
-        <div class="text-sm text-gray-500 mb-1">Avoided Emissions per P-REC</div>
-        <div id="avoidedPerPRec" class="text-3xl font-bold">0 tCO2e/MWh</div>
-      </div>
-      <div class="md:col-span-2">
-        <div class="text-sm text-gray-500 mb-1">Avoided Emissions per $1,000 Spent</div>
-        <div id="avoidedPerDollar" class="text-3xl font-bold">0 tCO2e</div>
-      </div>
-        </div>
+    <div>
+      <div class="text-sm text-gray-500 mb-2">Cost per tCO2e Avoided</div>
+      <div id="costPerTon" class="text-4xl font-bold leading-tight text-gray-900">$82.29</div>
+    </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <div class="text-sm text-gray-500 mb-2">Avoided Emissions per P-REC</div>
+      <div id="avoidedPerPRec" class="text-3xl font-bold leading-tight text-gray-900">0 tCO2e/MWh</div>
+    </div>
+
+    <div>
+      <div class="text-sm text-gray-500 mb-2">Avoided Emissions per $1,000 Spent</div>
+      <div id="avoidedPerDollar" class="text-3xl font-bold leading-tight text-gray-900">0 tCO2e</div>
+    </div>
+  </div>
+</div>
 
         <div class="border border-amber-500 bg-transparent px-5 py-5 text-amber-900 mb-8">
           <p class="text-lg leading-relaxed">
