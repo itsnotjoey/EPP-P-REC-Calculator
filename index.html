@@ -21,6 +21,59 @@
     #projectEF, #dieselEF, #gridEF, #keroseneEF, #candleEF, #otherEF {
       -moz-appearance: textfield;
     }
+  /* =========================
+       NEW: Print Report Styling
+    ========================= */
+    @media print {
+      /* 1. 将双列网格强制改为单列堆叠，彻底解决卡片被挤压、文字换行的问题 */
+      .lg\:grid-cols-2 {
+        display: block !important;
+      }
+
+      /* 2. 为左右两部分增加合理的上下间距 */
+      section {
+        margin-bottom: 2.5rem !important;
+        page-break-inside: avoid;
+      }
+
+      /* 3. 去掉所有输入框的边框和背景，让它们在报告上看起来像加粗的纯文本 */
+      input, select {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        font-weight: 700 !important;
+        color: #1e40af !important; /* 使用深蓝色突出显示用户输入的关键数值 */
+      }
+
+      /* 4. 隐藏输入框下方那些灰色的提示小字，让报告极其干净精简 */
+      p.text-xs.text-gray-500 {
+        display: none !important;
+      }
+
+      /* 5. 确保 OER 的三个结果卡片绝对不会被跨页切断 */
+      #oerResultsContainer .grid > div, 
+      .bg-white.p-4.rounded {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      /* 6. 防止标题和内容分家 (解决 Buyer Results 标题被孤立在第一页的问题) */
+      h2, h3 {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+
+      /* 7. 防止重要区块被拦腰切断 (解决 Policy Update 和数据网格跨页的问题) */
+      .border-amber-500, 
+      .space-y-8,
+      .space-y-4,
+      details {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-white-50 text-gray-900 font-sans">
@@ -57,12 +110,26 @@
     <span>Print / Save as PDF</span>
   </button>
 </div>
+    <!-- =========================
+     NEW: TAB NAVIGATION
+========================= -->
+<div class="border-b border-gray-200 mb-8 print:hidden">
+  <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+    <button id="btn-tab1" onclick="switchTab('tab1')" class="border-brand-800 text-brand-800 whitespace-nowrap py-4 px-1 border-b-2 font-bold text-lg font-serif transition-colors">
+      Standard Calculator
+    </button>
+    <button id="btn-tab2" onclick="switchTab('tab2')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg font-serif transition-colors">
+      SBTi OER Navigator
+    </button>
+  </nav>
+</div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
 <!-- =========================
      Left Column: Inputs
 ========================= -->
       <section>
+        <div id="tab1-left">
         <h2 class="text-3xl font-serif font-bold mb-6 text-brand-800 not-italic">1. Project &amp; Buyer Inputs</h2>
         <div class="space-y-5">
 
@@ -178,6 +245,36 @@
           class="mt-6 rounded-lg bg-green-100 text-green-800 px-4 py-4 text-center font-semibold text-xl">
           Total Baseline Share: 100.0%
         </div>
+        </div>
+<!-- 新增 Tab 2 的外壳 (默认隐藏) -->
+        <div id="tab2-left" style="display: none;">
+          <h2 class="text-3xl font-serif font-bold mb-6 border-l-4 border-gray-300 pl-4 text-brand-800 not-italic">Advanced Procurement Planning (OER)</h2>
+          
+          <div class="bg-blue-50 border border-blue-200 p-5 rounded-lg">
+            <div class="mb-5 bg-white p-4 rounded text-sm text-gray-700 shadow-sm border border-gray-100">
+              <span class="font-bold block mb-2 text-gray-900">What is the SBTi OER Framework?</span>
+              <p class="mb-2">The SBTi OER framework encourages companies to take responsibility for remaining emissions on their path to net-zero.</p>
+              <ul class="list-disc pl-5 space-y-1 text-gray-600">
+                <li><strong class="text-gray-800">1% Recognized:</strong> Entry level. Neutralize 1% of ongoing emissions via physical mitigation.</li>
+                <li><strong class="text-gray-800">10% Scale-up:</strong> Proactive interim milestone to demonstrate continuous progress.</li>
+                <li><strong class="text-gray-800">40% Leadership:</strong> The highest standard. Requires neutralizing 40% of emissions physically.</li>
+              </ul>
+              <hr class="my-3 border-gray-100" />
+              <span class="font-bold block mb-2 text-gray-900">How targets are calculated:</span>
+              <p class="mb-2">Targets are modeled using the SBTi "Ton-for-ton" pathway.</p>
+              <div class="bg-gray-50 p-2 rounded border border-gray-200 mb-1 text-xs font-mono text-gray-700">
+                Required P-RECs = &lceil; (Corporate Emissions &times; Tier %) / Avoided Emissions per P-REC &rceil;
+              </div>
+              <p class="text-xs text-gray-500 italic">* Final quantities are rounded up to the nearest whole P-REC.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-gray-900 mb-1">Corporate Scope 1-3 Annual Emissions (tCO2e)</label>
+              <p class="text-xs text-gray-500 mb-2">Enter the corporate buyer's total ongoing emissions.</p>
+              <input id="corpEmissions" type="number" value="1000000" class="w-full md:w-2/3 rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500" />
+            </div>
+          </div>
+        </div>
       </section>
 
  <!-- =========================
@@ -221,12 +318,42 @@
   </div>
 </div>
 
+        <div id="oerResultsContainer" style="display: none;" class="mb-8 pt-8 border-t-2 border-dashed border-gray-300">
+  <h3 class="text-2xl font-serif font-bold text-blue-900 mb-2 not-italic">SBTi OER Procurement Targets</h3>
+  <p class="text-sm text-gray-600 mb-5">Estimated P-RECs required to achieve physical mitigation (Ton-for-ton) targets.</p>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white p-5 rounded-lg shadow border-t-4 border-gray-400">
+      <div class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Recognized</div>
+      <div class="text-sm text-gray-800 mb-3 font-medium">1% Mitigation</div>
+      <div class="text-2xl font-bold text-gray-900" id="oer1Qty">0 P-RECs</div>
+      <div class="text-sm font-medium text-blue-600 mt-2" id="oer1Cost">Est. Cost: $0</div>
+    </div>
+
+    <div class="bg-white p-5 rounded-lg shadow border-t-4 border-blue-400">
+      <div class="text-xs font-bold text-blue-500 uppercase tracking-wide mb-1">Scale-up</div>
+      <div class="text-sm text-gray-800 mb-3 font-medium">10% Mitigation</div>
+      <div class="text-2xl font-bold text-gray-900" id="oer10Qty">0 P-RECs</div>
+      <div class="text-sm font-medium text-blue-600 mt-2" id="oer10Cost">Est. Cost: $0</div>
+    </div>
+
+    <div class="bg-white p-5 rounded-lg shadow border-t-4 border-amber-400">
+      <div class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">Leadership</div>
+      <div class="text-sm text-gray-800 mb-3 font-medium">40% Mitigation</div>
+      <div class="text-2xl font-bold text-gray-900" id="oer40Qty">0 P-RECs</div>
+      <div class="text-sm font-medium text-blue-600 mt-2" id="oer40Cost">Est. Cost: $0</div>
+    </div>
+  </div>
+</div>
         <div class="border border-amber-500 bg-transparent px-5 py-5 text-amber-900 mb-8">
           <p class="text-lg leading-relaxed">
             <span class="font-bold">Methodological Note:</span>
             P-RECs are energy attribute certificates, not carbon offsets.
             Avoided emissions should be reported separately from Scope 2 market-based emissions
             and disclosed with baseline assumptions.
+            <br><br>
+    <span class="font-bold text-brand-800">Policy Update Opportunity:</span> 
+    Under emerging standards (e.g., SBTi, GHGP), this quantified physical avoided emissions value may soon be eligible to support corporate <span class="font-bold">Scope 3 targets</span> and <span class="font-bold">Ongoing Emission Responsibility (OER)</span> leadership claims.
           </p>
         </div>
 
@@ -253,6 +380,12 @@
         <span class="font-semibold">Emission Factors:</span> Values for generator fuels (diesel), kerosene, and candle/paraffin are sourced from the 
         <a href="https://www.epa.gov/climateleadership/ghg-emission-factors-hub" target="_blank" class="text-brand-600 hover:text-brand-800 underline transition-colors">
           EPA GHG Emission Factors Hub
+        </a>.
+      </li>
+      <li>
+        <span class="font-semibold">Ongoing Emissions Responsibility (OER) framework</span> is sourced from the 
+        <a href="https://files.sciencebasedtargets.org/production/files/Ongoing-emissions-responsibility-A-framework-for-credible-and-competitive-climate-action.pdf" target="_blank" class="text-brand-600 hover:text-brand-800 underline transition-colors">
+          SBTi OER document
         </a>.
       </li>
     </ul>
@@ -338,6 +471,31 @@
   document.getElementById("costPerTon").textContent = totalAvoided > 0 ? `$${formatNumber(costPerTon, 2)}` : "N/A";
   document.getElementById("avoidedPerPRec").textContent = `${formatNumber(perPRec, 3)} tCO2e/MWh`;
   document.getElementById("avoidedPerDollar").textContent = `${formatNumber(perThousandDollars, 3)} tCO2e`;
+  
+  // --- NEW: OER Calculations ---
+  const corpEmissions = parseFloat(document.getElementById("corpEmissions").value) || 0;
+  
+  // 1 P-REC 的有效避免排放量 = 1 * Delivery * Displace * ConsFactor * (BaselineEF - ProjectEF)
+  const avoidedPerSinglePRec = 1 * delivery * displace * consFactor * avoidedPerMWh;
+
+  if (avoidedPerSinglePRec > 0) {
+    const qty1 = Math.ceil((0.01 * corpEmissions) / avoidedPerSinglePRec);
+    const qty10 = Math.ceil((0.10 * corpEmissions) / avoidedPerSinglePRec);
+    const qty40 = Math.ceil((0.40 * corpEmissions) / avoidedPerSinglePRec);
+
+    document.getElementById("oer1Qty").textContent = formatNumber(qty1) + " P-RECs";
+    document.getElementById("oer1Cost").textContent = "Est. Cost: $" + formatNumber(qty1 * price);
+
+    document.getElementById("oer10Qty").textContent = formatNumber(qty10) + " P-RECs";
+    document.getElementById("oer10Cost").textContent = "Est. Cost: $" + formatNumber(qty10 * price);
+
+    document.getElementById("oer40Qty").textContent = formatNumber(qty40) + " P-RECs";
+    document.getElementById("oer40Cost").textContent = "Est. Cost: $" + formatNumber(qty40 * price);
+  } else {
+    // 如果基准线没选对导致算不出减排量
+    ["oer1Qty", "oer10Qty", "oer40Qty"].forEach(id => document.getElementById(id).textContent = "N/A");
+    ["oer1Cost", "oer10Cost", "oer40Cost"].forEach(id => document.getElementById(id).textContent = "Est. Cost: -");
+  }
 
   // 6. Alert Box styling
       const totalBox = document.getElementById("baselineTotalBox");
@@ -352,6 +510,41 @@
     const inputModeEl = document.getElementById("inputMode");
     const budgetBlock = document.getElementById("budgetBlock");
     const quantityBlock = document.getElementById("quantityBlock");
+    // --- NEW: Tab Switching Logic ---
+    const tab1Left = document.getElementById("tab1-left");
+    const tab2Left = document.getElementById("tab2-left");
+    const oerResultsContainer = document.getElementById("oerResultsContainer");
+    const btnTab1 = document.getElementById("btn-tab1");
+    const btnTab2 = document.getElementById("btn-tab2");
+
+    const activeClasses = ["border-brand-800", "text-brand-800", "font-bold"];
+    const inactiveClasses = ["border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300", "font-medium"];
+
+    function switchTab(tabId) {
+      if (tabId === 'tab1') {
+        // Show Tab 1 content, hide Tab 2 content & OER Results
+        tab1Left.style.display = "block";
+        tab2Left.style.display = "none";
+        oerResultsContainer.style.display = "none";
+        
+        // Style Buttons
+        btnTab1.classList.remove(...inactiveClasses);
+        btnTab1.classList.add(...activeClasses);
+        btnTab2.classList.remove(...activeClasses);
+        btnTab2.classList.add(...inactiveClasses);
+      } else {
+        // Show Tab 2 content & OER Results, hide Tab 1 content
+        tab1Left.style.display = "none";
+        tab2Left.style.display = "block";
+        oerResultsContainer.style.display = "block";
+
+        // Style Buttons
+        btnTab2.classList.remove(...inactiveClasses);
+        btnTab2.classList.add(...activeClasses);
+        btnTab1.classList.remove(...activeClasses);
+        btnTab1.classList.add(...inactiveClasses);
+      }
+    }
 
     function updateInputMode() {
       if (inputModeEl.value === "budget") {
