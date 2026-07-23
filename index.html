@@ -119,7 +119,10 @@
       Standard Calculator
     </button>
     <button id="btn-tab2" onclick="switchTab('tab2')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg font-serif transition-colors">
-      SBTi OER Navigator
+      SBTi OER (Ton-for-ton)
+    </button>
+    <button id="btn-tab3" onclick="switchTab('tab3')" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg font-serif transition-colors">
+      SBTi OER (Money-for-ton)
     </button>
   </nav>
 </div>
@@ -275,6 +278,34 @@
             </div>
           </div>
         </div>
+        <!-- 👇 新增 Tab 3 的外壳 (默认隐藏) -->
+        <div id="tab3-left" style="display: none;">
+          <h2 class="text-3xl font-serif font-bold mb-6 border-l-4 border-gray-300 pl-4 text-brand-800 not-italic">Contribution Budget (Money-for-ton)</h2>
+          
+          <div class="bg-indigo-50 border border-indigo-200 p-5 rounded-lg">
+            <div class="mb-5 bg-white p-4 rounded text-sm text-gray-700 shadow-sm border border-gray-100">
+              <span class="font-bold block mb-2 text-gray-900">SBTi's Recommended Pathway for EACs</span>
+              <p class="mb-2">Under the "Contribution Budget" approach, companies establish an internal carbon price and deploy the resulting budget toward high-impact climate actions like P-RECs.</p>
+              <div class="bg-gray-50 p-2 rounded border border-gray-200 mb-1 text-xs font-mono text-gray-700">
+                1. Target = Corporate Emissions &times; Tier %<br>
+                2. Budget = Target &times; Internal Carbon Price<br>
+                3. P-RECs = &lfloor; Budget / P-REC Price &rfloor;
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-bold text-gray-900 mb-1">Corporate Scope 1-3 Annual Emissions (tCO2e)</label>
+                <input id="corpEmissionsMoney" type="number" value="1000000" class="w-full md:w-2/3 rounded-md border border-gray-300 px-3 py-2" />
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-gray-900 mb-1">Internal Carbon Price ($/tCO2e)</label>
+                <p class="text-xs text-gray-500 mb-2">SBTi recommends a minimum of $20/tCO2e for Scale-up.</p>
+                <input id="internalCarbonPrice" type="number" value="20" class="w-full md:w-2/3 rounded-md border border-gray-300 px-3 py-2" />
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
  <!-- =========================
@@ -345,6 +376,37 @@
     </div>
   </div>
 </div>
+        <!-- 👇 新增 Tab 3 的结果面板 (默认隐藏) -->
+        <div id="oerMoneyResultsContainer" style="display: none;" class="mb-8 pt-8 border-t-2 border-dashed border-gray-300">
+          <h3 class="text-2xl font-serif font-bold text-indigo-900 mb-2 not-italic">SBTi Contribution Budget Targets</h3>
+          <p class="text-sm text-gray-600 mb-5">Calculated using the "Money-for-ton" financial pathway.</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 1% Tier -->
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-gray-400">
+              <div class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Recognized (1%)</div>
+              <div class="text-lg font-bold text-gray-900 mb-1" id="oerMoney1Budget">$0 Budget</div>
+              <div class="text-sm font-medium text-indigo-600" id="oerMoney1Qty">0 P-RECs</div>
+              <div class="text-xs text-green-600 mt-2" id="oerMoney1Avoided">~0 tCO2e Avoided</div>
+            </div>
+
+            <!-- 10% Tier -->
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-indigo-400">
+              <div class="text-xs font-bold text-indigo-500 uppercase tracking-wide mb-1">Scale-up (10%)</div>
+              <div class="text-lg font-bold text-gray-900 mb-1" id="oerMoney10Budget">$0 Budget</div>
+              <div class="text-sm font-medium text-indigo-600" id="oerMoney10Qty">0 P-RECs</div>
+              <div class="text-xs text-green-600 mt-2" id="oerMoney10Avoided">~0 tCO2e Avoided</div>
+            </div>
+
+            <!-- 40% Tier -->
+            <div class="bg-white p-5 rounded-lg shadow border-t-4 border-amber-400">
+              <div class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">Leadership (40%)</div>
+              <div class="text-lg font-bold text-gray-900 mb-1" id="oerMoney40Budget">$0 Budget</div>
+              <div class="text-sm font-medium text-indigo-600" id="oerMoney40Qty">0 P-RECs</div>
+              <div class="text-xs text-green-600 mt-2" id="oerMoney40Avoided">~0 tCO2e Avoided</div>
+            </div>
+          </div>
+        </div>
         <div class="border border-amber-500 bg-transparent px-5 py-5 text-amber-900 mb-8">
           <p class="text-lg leading-relaxed">
             <span class="font-bold">Methodological Note:</span>
@@ -496,6 +558,44 @@
     ["oer1Qty", "oer10Qty", "oer40Qty"].forEach(id => document.getElementById(id).textContent = "N/A");
     ["oer1Cost", "oer10Cost", "oer40Cost"].forEach(id => document.getElementById(id).textContent = "Est. Cost: -");
   }
+      // 新增: Tab 3 OER (Money-for-ton) Calculations
+  const corpEmissionsMoney = parseFloat(document.getElementById("corpEmissionsMoney").value) || 0;
+  const internalCarbonPrice = parseFloat(document.getElementById("internalCarbonPrice").value) || 0;
+  
+  if (avoidedPerSinglePRec > 0 && price > 0) {
+    // 1. Calculate Target Tonnage
+    const target1 = corpEmissionsMoney * 0.01;
+    const target10 = corpEmissionsMoney * 0.10;
+    const target40 = corpEmissionsMoney * 0.40;
+
+    // 2. Calculate Contribution Budget
+    const budget1 = target1 * internalCarbonPrice;
+    const budget10 = target10 * internalCarbonPrice;
+    const budget40 = target40 * internalCarbonPrice;
+
+    // 3. Translate to P-RECs (向下取整 Floor 以确保不超预算)
+    const pRecs1 = Math.floor(budget1 / price);
+    const pRecs10 = Math.floor(budget10 / price);
+    const pRecs40 = Math.floor(budget40 / price);
+
+    // Update UI for Tab 3
+    document.getElementById("oerMoney1Budget").textContent = "$" + formatNumber(budget1) + " Budget";
+    document.getElementById("oerMoney1Qty").textContent = formatNumber(pRecs1) + " P-RECs";
+    document.getElementById("oerMoney1Avoided").textContent = "~" + formatNumber(pRecs1 * avoidedPerSinglePRec, 1) + " tCO2e Avoided";
+
+    document.getElementById("oerMoney10Budget").textContent = "$" + formatNumber(budget10) + " Budget";
+    document.getElementById("oerMoney10Qty").textContent = formatNumber(pRecs10) + " P-RECs";
+    document.getElementById("oerMoney10Avoided").textContent = "~" + formatNumber(pRecs10 * avoidedPerSinglePRec, 1) + " tCO2e Avoided";
+
+    document.getElementById("oerMoney40Budget").textContent = "$" + formatNumber(budget40) + " Budget";
+    document.getElementById("oerMoney40Qty").textContent = formatNumber(pRecs40) + " P-RECs";
+    document.getElementById("oerMoney40Avoided").textContent = "~" + formatNumber(pRecs40 * avoidedPerSinglePRec, 1) + " tCO2e Avoided";
+  } else {
+    // Error fallback
+    ["oerMoney1Budget", "oerMoney10Budget", "oerMoney40Budget"].forEach(id => document.getElementById(id).textContent = "$0 Budget");
+    ["oerMoney1Qty", "oerMoney10Qty", "oerMoney40Qty"].forEach(id => document.getElementById(id).textContent = "N/A");
+    ["oerMoney1Avoided", "oerMoney10Avoided", "oerMoney40Avoided"].forEach(id => document.getElementById(id).textContent = "-");
+  }
 
   // 6. Alert Box styling
       const totalBox = document.getElementById("baselineTotalBox");
@@ -513,36 +613,40 @@
     // --- NEW: Tab Switching Logic ---
     const tab1Left = document.getElementById("tab1-left");
     const tab2Left = document.getElementById("tab2-left");
+    const tab3Left = document.getElementById("tab3-left"); 
     const oerResultsContainer = document.getElementById("oerResultsContainer");
+    const oerMoneyResultsContainer = document.getElementById("oerMoneyResultsContainer"); 
+    
     const btnTab1 = document.getElementById("btn-tab1");
     const btnTab2 = document.getElementById("btn-tab2");
+    const btnTab3 = document.getElementById("btn-tab3"); 
 
     const activeClasses = ["border-brand-800", "text-brand-800", "font-bold"];
     const inactiveClasses = ["border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300", "font-medium"];
 
     function switchTab(tabId) {
+      // 1. 先重置所有的隐藏和样式
+      [tab1Left, tab2Left, tab3Left, oerResultsContainer, oerMoneyResultsContainer].forEach(el => el.style.display = "none");
+      [btnTab1, btnTab2, btnTab3].forEach(btn => {
+        btn.classList.remove(...activeClasses);
+        btn.classList.add(...inactiveClasses);
+      });
+
+      // 2. 根据选中的 Tab 单独点亮
       if (tabId === 'tab1') {
-        // Show Tab 1 content, hide Tab 2 content & OER Results
         tab1Left.style.display = "block";
-        tab2Left.style.display = "none";
-        oerResultsContainer.style.display = "none";
-        
-        // Style Buttons
         btnTab1.classList.remove(...inactiveClasses);
         btnTab1.classList.add(...activeClasses);
-        btnTab2.classList.remove(...activeClasses);
-        btnTab2.classList.add(...inactiveClasses);
-      } else {
-        // Show Tab 2 content & OER Results, hide Tab 1 content
-        tab1Left.style.display = "none";
+      } else if (tabId === 'tab2') {
         tab2Left.style.display = "block";
         oerResultsContainer.style.display = "block";
-
-        // Style Buttons
         btnTab2.classList.remove(...inactiveClasses);
         btnTab2.classList.add(...activeClasses);
-        btnTab1.classList.remove(...activeClasses);
-        btnTab1.classList.add(...inactiveClasses);
+      } else if (tabId === 'tab3') {
+        tab3Left.style.display = "block";
+        oerMoneyResultsContainer.style.display = "block";
+        btnTab3.classList.remove(...inactiveClasses);
+        btnTab3.classList.add(...activeClasses);
       }
     }
 
